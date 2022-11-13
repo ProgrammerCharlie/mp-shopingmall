@@ -1,58 +1,67 @@
 <template>
 	<view>
-		<swiper
-		 :indicator-dots="true" 
-		 :autoplay="true" 
-		 :interval="3000" 
-		 :duration="1000" 
-		 :circular="true"
-		>
-			<swiper-item v-for="item in swiperList" :key="item.goods_id">
-				<navigator class="swiper-item" :url="'/subpkg/detail/detail?goods_id=' + item.goods_id">
-					<image :src="item.image_src"></image>
-				</navigator>
-			</swiper-item>
-		</swiper>
-		
-		<view class="nav-list">
-			<view
-			 class="nav-item" 
-			 v-for="(item,index) in navList" 
-			 :key="index"
-			 @click="navClickHandler(item)"
-			>
-				<image :src="item.image_src" class="nav-img"></image>
-			</view>
+		<view class="search-box">
+			<MySearch @click="gotoSearch"></MySearch>
 		</view>
 		
-		<view class="floor-list">
-			<view class="floor-item" v-for="(item,index) in floorList" :key="index">
-				<!-- 标题 -->
-				<image :src="item.floor_title.image_src" class="floor-title"></image>	
-				<view class="floor-img-box">
-					<!-- 左侧大图 -->
-					<navigator class="left-img-box" :url="item.product_list[0].url">
-						<image
-						 :src="item.product_list[0].image_src" 
-						 :style="{width: item.product_list[0].image_width + 'rpx'}" 
-						 mode="widthFix"
-						></image>
+		<view>
+			<!-- 首页轮播图 -->
+			<swiper
+			 :indicator-dots="true" 
+			 :autoplay="true" 
+			 :interval="3000" 
+			 :duration="1000" 
+			 :circular="true"
+			>
+				<swiper-item v-for="item in swiperList" :key="item.goods_id">
+					<navigator class="swiper-item" :url="'/subpkg/detail/detail?goods_id=' + item.goods_id">
+						<image :src="item.image_src"></image>
 					</navigator>
-					<!-- 右侧小图 -->
-					<view class="right-img-box">
-						<navigator
-						 class="right-img-item" 
-						 v-for="(item2,index2) in item.product_list" 
-						 :key="index2" 
-						 v-if="index2!=0"
-						 :url="item2.url"
-						>
+				</swiper-item>
+			</swiper>
+			
+			<!-- 导航菜单 -->
+			<view class="nav-list">
+				<view
+				 class="nav-item" 
+				 v-for="(item,index) in navList" 
+				 :key="index"
+				 @click="navClickHandler(item)"
+				>
+					<image :src="item.image_src" class="nav-img"></image>
+				</view>
+			</view>
+			
+			<!-- 商品楼层 -->
+			<view class="floor-list">
+				<view class="floor-item" v-for="(item,index) in floorList" :key="index">
+					<!-- 标题 -->
+					<image :src="item.floor_title.image_src" class="floor-title"></image>	
+					<view class="floor-img-box">
+						<!-- 左侧大图 -->
+						<navigator class="left-img-box" :url="item.product_list[0].url">
 							<image
-							 :src="item2.image_src" 
-							 :style="{width: item2.image_width + 'rpx'}"
+							 :src="item.product_list[0].image_src" 
+							 :style="{width: item.product_list[0].image_width + 'rpx'}" 
 							 mode="widthFix"
 							></image>
 						</navigator>
+						<!-- 右侧小图 -->
+						<view class="right-img-box">
+							<navigator
+							 class="right-img-item" 
+							 v-for="(item2,index2) in item.product_list" 
+							 :key="index2" 
+							 v-if="index2!=0"
+							 :url="item2.url"
+							>
+								<image
+								 :src="item2.image_src" 
+								 :style="{width: item2.image_width + 'rpx'}"
+								 mode="widthFix"
+								></image>
+							</navigator>
+						</view>
 					</view>
 				</view>
 			</view>
@@ -88,6 +97,7 @@
 					this.swiperList = res.message
 				}
 			},
+			
 			// 分类导航
 			async getNavList(){
 				const {data:res} = await uni.$http.get('/api/public/v1/home/catitems')
@@ -101,6 +111,7 @@
 					this.navList = res.message
 				}
 			},
+			
 			// 跳转到分类tabbar页
 			navClickHandler(nav){
 				if(nav.name = '分类'){
@@ -109,6 +120,7 @@
 					})
 				}
 			},
+			
 			// 楼层
 			async getFloorList(){
 				const {data:res} = await uni.$http.get('/api/public/v1/home/floordata')
@@ -128,12 +140,25 @@
 					
 					this.floorList = res.message
 				}
+			},
+			
+			// 搜索组件
+			gotoSearch(){
+				uni.navigateTo({
+					url: '/subpkg/search/search'
+				})
 			}
 		}
 	}
 </script>
 
 <style>
+.search-box{
+	position: sticky;
+	top: 0;
+	z-index: 999;
+}	
+
 swiper{
 	height: 330rpx;
 }

@@ -1,38 +1,41 @@
 <template>
-	
-	
-	<view class="scroll-view-container">
-		<scroll-view scroll-y class="left-scroll-view" :style="{height: winHeight+'px'}">
-			<block v-for="(item, i) in cateList" :key="i">
-				<view
-				 :class="['left-scroll-view-item', active === i ? 'active' : '']" 
-				 @click="changeActive(i)"
-				>{{item.cat_name}}</view>
-			</block>
-		</scroll-view>
+	<view>
+		<MySearch @click="gotoSearch"></MySearch>
 		
-		<scroll-view
-		 scroll-y 
-		 class="right-scroll-view" 
-		 :style="{height: winHeight+'px'}" 
-		 :scroll-top="scrollTop"
-		>
-			<!-- 二级分类 -->
-			<view class="cate-lv2" v-for="(item, i) in cateLevel2" :key="i">
-				<view class="cate-lv2-title">/ {{item.cat_name}} /</view>
-				<!-- 三级分类 -->
-				<view class="cate-lv3-list">
-					<view class="cate-lv3-item"
-						v-for="(item2, i2) in item.children"
-						:key="i2"
-						@click="gotoGoodsList(item2)"
-					>
-						<image :src="item2.cat_icon"></image>
-						<text>{{item2.cat_name}}</text>
+		<view class="scroll-view-container">
+			<!-- 一级分类 -->
+			<scroll-view scroll-y class="left-scroll-view" :style="{height: winHeight+'px'}">
+				<block v-for="(item, i) in cateList" :key="i">
+					<view
+					 :class="['left-scroll-view-item', active === i ? 'active' : '']" 
+					 @click="changeActive(i)"
+					>{{item.cat_name}}</view>
+				</block>
+			</scroll-view>
+			
+			<scroll-view
+			 scroll-y 
+			 class="right-scroll-view" 
+			 :style="{height: winHeight+'px'}" 
+			 :scroll-top="scrollTop"
+			>
+				<!-- 二级分类 -->
+				<view class="cate-lv2" v-for="(item, i) in cateLevel2" :key="i">
+					<view class="cate-lv2-title">/ {{item.cat_name}} /</view>
+					<!-- 三级分类 -->
+					<view class="cate-lv3-list">
+						<view class="cate-lv3-item"
+							v-for="(item2, i2) in item.children"
+							:key="i2"
+							@click="gotoGoodsList(item2)"
+						>
+							<image :src="item2.cat_icon"></image>
+							<text>{{item2.cat_name}}</text>
+						</view>
 					</view>
 				</view>
-			</view>
-		</scroll-view>
+			</scroll-view>
+		</view>
 	</view>
 </template>
 
@@ -49,7 +52,7 @@
 		},
 		onLoad(){
 			const sysInfo = uni.getSystemInfoSync()
-			this.winHeight = sysInfo.windowHeight
+			this.winHeight = sysInfo.windowHeight - 50
 			
 			this.getCateList()
 		},
@@ -69,6 +72,7 @@
 					this.cateLevel2 = this.cateList[0].children
 				}
 			},
+			
 			// 切换一级菜单active
 			changeActive(i){
 				this.active = i
@@ -77,10 +81,18 @@
 				
 				this.scrollTop = this.scrollTop === 0 ? 1 : 0
 			},
+			
 			// 跳转到分包下的商品列表
 			gotoGoodsList(item){
 				uni.navigateTo({
 					url: '../../subpkg/goods_list/goods_list?cid=' + item.cat_id
+				})
+			},
+			
+			// 跳转到分包下的搜索页面
+			gotoSearch(){
+				uni.navigateTo({
+					url:'/subpkg/search/search'
 				})
 			}
 		}
